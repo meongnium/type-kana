@@ -66,7 +66,7 @@
 	</section>
 	<MenuBar class="glass-morphism contrast">
 		<div class="menu content-padding">
-			<Button href="/" style="outline">
+			<Button href="./" style="outline">
 				<Icon path={mdiArrowLeft} size="1.25em" />
 				Back
 			</Button>

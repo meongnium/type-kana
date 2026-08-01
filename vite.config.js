@@ -18,7 +18,8 @@ const config = {
 			preventAssignment: true,
 			values: {
 				COMMIT_HASH_SHORT: execSyncSafe("git rev-parse --short HEAD"),
-				COMMIT_HASH_LONG: execSyncSafe("git rev-parse HEAD")
+				COMMIT_HASH_LONG: execSyncSafe("git rev-parse HEAD"),
+				__TYPE_KANA_BASE_PATH__: process.env.BASE_PATH ?? ""
 			}
 		}),
 		sveltekit()

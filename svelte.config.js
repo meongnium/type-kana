@@ -1,5 +1,5 @@
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte"
-import adapterVercel from "@sveltejs/adapter-vercel"
+import adapterStatic from "@sveltejs/adapter-static"
 import path from "path"
 import { readdirSync } from "fs"
 
@@ -15,7 +15,7 @@ function listRoutesIn(p) {
 	const dir = readdirSync(routesPath, { withFileTypes: true })
 
 	const filenames = dir
-		.filter(({ isFile, name }) => isFile && !name.startsWith("_"))
+		.filter((dirent) => dirent.isDirectory() && !dirent.name.startsWith("_"))
 		.map((dirent) => dirent.name)
 
 	if (filenames.length === 0) {
@@ -29,15 +29,29 @@ function listRoutesIn(p) {
 	return routes
 }
 
+const base = process.env.BASE_PATH ?? ""
+const prerenderEntries = [
+	"/",
+	"/history",
+	"/playground-and-explosions-testing",
+	"/session",
+	"/setup",
+	"/summary",
+	...listRoutesIn("/icon/")
+]
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// an array of file extensions that should be treated as Svelte components
 	extensions: [".svelte"],
 
 	kit: {
-		adapter: adapterVercel(),
+		adapter: adapterStatic(),
+		paths: {
+			base
+		},
 		prerender: {
-			entries: ["*", ...listRoutesIn("/icon/")]
+			entries: prerenderEntries
 		},
 		alias: {
 			$: "src"

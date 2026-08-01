@@ -25,7 +25,7 @@
 		</p>
 
 		<div class="buttons">
-			<Button href="/setup">
+			<Button href="setup">
 				Start
 				<Icon size="1.25em" path={mdiArrowRight} />
 			</Button>

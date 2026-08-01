@@ -66,7 +66,7 @@
 	</button>
 
 	<a
-		href="/summary"
+		href="summary"
 		class="button"
 		title="Finish session"
 		onmouseenter={() => {

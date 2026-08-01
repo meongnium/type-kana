@@ -94,14 +94,14 @@
 		border: 1px solid var(--checked-highlight-color);
 
 		&:after {
-			mask-image: url("/icon/checked.svg");
+			mask-image: url("__TYPE_KANA_BASE_PATH__/icon/checked.svg");
 			mask-size: 90%;
 			background-color: white;
 		}
 	}
 
 	input[type="checkbox"]:indeterminate:after {
-		mask-image: url("/icon/indeterminate.svg");
+		mask-image: url("__TYPE_KANA_BASE_PATH__/icon/indeterminate.svg");
 		mask-size: 78%;
 		background-color: hsl(0, 0%, 60%);
 	}

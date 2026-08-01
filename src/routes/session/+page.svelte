@@ -104,7 +104,7 @@
 		time = Date.now()
 
 		if (unquizzed.length < 5) {
-			preloadData("/summary")
+			preloadData("summary")
 			loadVictorySound()
 		}
 

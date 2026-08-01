@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from "$app/state"
 	import { dev } from "$app/environment"
+import { base } from "$app/paths"
 </script>
 
 <svelte:head>
@@ -16,5 +17,5 @@
 {/if}
 
 {#if page.status === 404}
-	<a class="text-link" href="/">Go back home</a>
+	<a class="text-link" href={base || "/"}>Go back home</a>
 {/if}

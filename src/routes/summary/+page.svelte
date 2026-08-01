@@ -57,7 +57,7 @@
 		playDropSound()
 		const incorrectKanas = incorrect.map((item) => item.kana)
 		quiz.resetWithKanas(incorrectKanas)
-		goto("/session")
+		goto("session")
 	}
 </script>
 
@@ -142,7 +142,7 @@
 		<div class="menu-items">
 			{#if unquizzed.length == 0}
 				<Button
-					href="/session"
+					href="session"
 					disabled={$dictionary.length === 0}
 					onclick={() => {
 						playDropSound()
@@ -154,7 +154,7 @@
 				</Button>
 			{/if}
 			{#if unquizzed.length > 0}
-				<Button href="/session">
+				<Button href="session">
 					<Icon path={mdiArrowLeft} size="1.25em" />
 					Keep going
 				</Button>
@@ -165,11 +165,11 @@
 					Retry incorrect
 				</Button>
 			{/if}
-			<Button href="/setup" style="outline">
+			<Button href="setup" style="outline">
 				<Icon path={mdiArrowLeft} size="1.5em" />
 				Change kana
 			</Button>
-			<Button href="/history" style="outline">
+			<Button href="history" style="outline">
 				<Icon path={mdiHistory} size="1.5em" />
 				History
 			</Button>
