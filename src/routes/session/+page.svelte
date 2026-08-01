@@ -104,7 +104,7 @@
 		time = Date.now()
 
 		if (unquizzed.length < 5) {
-			preloadData("summary")
+			preloadData("summary/")
 			loadVictorySound()
 		}
 
@@ -135,7 +135,7 @@
 
 	// go to results if queue is empty
 	$effect(() => {
-		if (unquizzed.length === 0) setTimeout(() => goto("summary"), 500)
+		if (unquizzed.length === 0) setTimeout(() => goto("summary/"), 500)
 	})
 </script>
 

@@ -71,7 +71,7 @@
 				Back
 			</Button>
 			<Button
-				href="session"
+				href="session/"
 				disabled={$dictionary.length === 0}
 				onclick={() => {
 					playDropSound()

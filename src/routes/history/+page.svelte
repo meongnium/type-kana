@@ -138,7 +138,7 @@
 
 <MenuBar class="glass-morphism">
 	<div class="menu content-width content-padding center">
-		<Button href="setup" style="outline">
+		<Button href="setup/" style="outline">
 			<Icon path={mdiArrowLeft} size="1.25em" />
 			Back
 		</Button>

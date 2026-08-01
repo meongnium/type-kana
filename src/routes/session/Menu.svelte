@@ -22,7 +22,7 @@
 </script>
 
 <section class="menu">
-	<a href="setup" class="button" title="Go back" data-sveltekit-prefetch>
+	<a href="setup/" class="button" title="Go back" data-sveltekit-prefetch>
 		<Icon path={mdiArrowLeft} />
 	</a>
 
@@ -66,7 +66,7 @@
 	</button>
 
 	<a
-		href="summary"
+		href="summary/"
 		class="button"
 		title="Finish session"
 		onmouseenter={() => {

@@ -48,7 +48,8 @@ const config = {
 	kit: {
 		adapter: adapterStatic(),
 		paths: {
-			base
+			base,
+			relative: false
 		},
 		prerender: {
 			entries: prerenderEntries
