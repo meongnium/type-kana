@@ -140,7 +140,7 @@ function unique(values: readonly string[]): string[] {
 
 function aliasesForKana(token: string): readonly string[] {
 	const canonical = CANONICAL_ROMAJI[token]
-	if (!canonical) throw new Error(`Unsupported romaji token: ${token}`)
+	if (!canonical) throw new Error("Unsupported romaji token: " + token)
 	return ALIASES[token] ?? [canonical]
 }
 
@@ -173,21 +173,12 @@ function aliasesForDetail(
 		return vowel ? [vowel] : []
 	}
 	if (detail.text === "ん") {
-		return next && startsWithVowelOrY(next.text)
-			? ["n'", "nn", "n"]
-			: ["n", "nn"]
+		return next && startsWithVowelOrY(next.text) ? ["n'", "n"] : ["n", "nn"]
 	}
 	if (detail.kind === "kana-token" || detail.kind === "yoon") {
 		return aliasesForKana(detail.text)
 	}
 	return []
-}
-
-function normalizedInput(input: string): string | undefined {
-	const trimmed = input.trim()
-	if (!trimmed || /\s/.test(trimmed)) return undefined
-	if (!/^[a-z']+$/i.test(trimmed)) return undefined
-	return trimmed.toLowerCase()
 }
 
 function tokenizedPronunciation(pronunciationKana: string): TokenDetail[] {
@@ -197,6 +188,7 @@ function tokenizedPronunciation(pronunciationKana: string): TokenDetail[] {
 		tokenization.details.some(
 			(detail) =>
 				detail.kind === "foreign-combination" ||
+				detail.kind === "unsupported-yoon" ||
 				detail.kind === "unknown" ||
 				detail.kind === "unsupported-small-kana"
 		)
@@ -217,7 +209,7 @@ export function canonicalRomaji(pronunciationKana: string): string {
 	for (const [index, detail] of details.entries()) {
 		const aliases = aliasesForDetail(detail, details[index + 1], output)
 		if (aliases.length === 0) {
-			throw new Error(`No romaji representation for token: ${detail.text}`)
+			throw new Error("No romaji representation for token: " + detail.text)
 		}
 		output += aliases[0]
 	}
@@ -242,9 +234,11 @@ export function isRomajiWordAnswer(
 	input: string,
 	pronunciationKana: string
 ): boolean {
-	const normalized = normalizedInput(input)
-	if (!normalized) return false
-	const candidate = normalized
+	const trimmed = input.trim()
+	if (!trimmed || /\s/.test(trimmed) || !/^[a-z']+$/i.test(trimmed)) {
+		return false
+	}
+	const candidate = trimmed.toLowerCase()
 
 	let details: TokenDetail[]
 	try {
@@ -255,7 +249,7 @@ export function isRomajiWordAnswer(
 
 	const memo = new Map<string, boolean>()
 	function matches(tokenIndex: number, inputIndex: number): boolean {
-		const key = `${tokenIndex}:${inputIndex}`
+		const key = tokenIndex + ":" + inputIndex
 		const cached = memo.get(key)
 		if (cached !== undefined) return cached
 		if (tokenIndex === details.length) return inputIndex === candidate.length

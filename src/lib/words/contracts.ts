@@ -1,3 +1,8 @@
+export const WORD_IMPORTER_SCHEMA_VERSION = 1 as const
+export const WORD_SOURCE_PIN_SCHEMA_VERSION = 1 as const
+export const WORD_SOURCE_ROW_SCHEMA_VERSION = 1 as const
+export const WORD_MAPPING_SCHEMA_VERSION = 1 as const
+export const WORD_MANUAL_OVERRIDE_SCHEMA_VERSION = 1 as const
 export const WORD_ARTIFACT_SCHEMA_VERSION = 1 as const
 export const WORD_COLLECTION_N5 = "jlpt-n5-estimated" as const
 export const WORD_ANSWER_POLICY = "romaji-hepburn-ascii-v1" as const
@@ -62,6 +67,16 @@ export interface OpenJlptSourceRow {
 	sourceLocator?: string
 }
 
+export interface WordImporterSnapshotV1 {
+	schemaVersion: typeof WORD_IMPORTER_SCHEMA_VERSION
+	sourcePins: readonly SourcePin[]
+	lexemes: readonly CanonicalLexeme[]
+	sourceRows: readonly OpenJlptSourceRow[]
+	decisions: readonly MappingDecision[]
+	diagnostics: readonly ImportDiagnostic[]
+	manualOverrides: readonly ManualOverride[]
+}
+
 export type MappingStatus =
 	| "exact"
 	| "manual-override"
@@ -71,12 +86,16 @@ export type MappingStatus =
 	| "unsupported-selector-mora"
 	| "invalid-surface"
 	| "invalid-restriction"
+	| "invalid-manual-override"
 	| "conflicting-membership"
 
 export type MappingApproval = "approved" | "pending" | "rejected"
 
 export interface MappingDecision {
+	schemaVersion: typeof WORD_MAPPING_SCHEMA_VERSION
 	sourceRowKey: string
+	sourceRecordHash: string
+	sourceLocator?: string
 	status: MappingStatus
 	approval: MappingApproval
 	candidateFormIds: readonly string[]
@@ -87,6 +106,7 @@ export interface MappingDecision {
 }
 
 export interface ManualOverride {
+	schemaVersion: typeof WORD_MANUAL_OVERRIDE_SCHEMA_VERSION
 	overrideId: string
 	sourceRowKey: string
 	selectedFormId: string

@@ -73,11 +73,14 @@ export function resolveEligibility(
 	const eligibilityRequirements: EligibilityRequirement[] = []
 
 	for (const [index, detail] of tokenization.details.entries()) {
-		if (detail.kind === "foreign-combination") {
+		if (
+			detail.kind === "foreign-combination" ||
+			detail.kind === "unsupported-yoon"
+		) {
 			diagnostics.push(
 				tokenDiagnostic(
 					"unsupported-selector-mora",
-					"Foreign kana combinations are not selectable in Phase 1.",
+					"The surface contains a token unavailable to the Phase 1 selector.",
 					detail.text
 				)
 			)
@@ -139,7 +142,9 @@ export function resolveEligibility(
 
 	let selectedForConfiguration: boolean | undefined
 	if (options.kanaType && options.selectedCanonicalTokens) {
-		const selected = new Set(options.selectedCanonicalTokens)
+		const selected = new Set(
+			options.selectedCanonicalTokens.map(katakanaToHiragana)
+		)
 		const missingTokens = requiredCanonicalTokens.filter(
 			(token) => !selected.has(token)
 		)
@@ -159,7 +164,7 @@ export function resolveEligibility(
 			diagnostics.push({
 				code: "missing-selected-kana",
 				severity: "info",
-				message: `The selection is missing: ${missingTokens.join(", ")}.`,
+				message: "The selection is missing: " + missingTokens.join(", ") + ".",
 				formIds: missingTokens
 			})
 		}

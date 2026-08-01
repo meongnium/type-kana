@@ -1,10 +1,18 @@
 import type { ImportDiagnostic } from "./contracts.ts"
+import {
+	FOREIGN_HIRAGANA_TOKENS,
+	SELECTOR_BASE_HIRAGANA_TOKENS,
+	SELECTOR_YOON_HIRAGANA_TOKENS,
+	UNSUPPORTED_SMALL_HIRAGANA,
+	UNSUPPORTED_YOON_HIRAGANA_TOKENS
+} from "./inventory.ts"
 import { hiraganaToKatakana } from "./surface.ts"
 
 export type TokenKind =
 	| "kana-token"
 	| "yoon"
 	| "foreign-combination"
+	| "unsupported-yoon"
 	| "small-tsu"
 	| "prolonged-mark"
 	| "unsupported-small-kana"
@@ -21,86 +29,6 @@ export interface TokenizationResult {
 	diagnostics: readonly ImportDiagnostic[]
 }
 
-const BASE_TOKENS = [
-	..."あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん",
-	..."がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽゔ"
-]
-
-const YŌON_TOKENS = [
-	"きゃ",
-	"きゅ",
-	"きょ",
-	"しゃ",
-	"しゅ",
-	"しょ",
-	"ちゃ",
-	"ちゅ",
-	"ちょ",
-	"にゃ",
-	"にゅ",
-	"にょ",
-	"ひゃ",
-	"ひゅ",
-	"ひょ",
-	"みゃ",
-	"みゅ",
-	"みょ",
-	"りゃ",
-	"りゅ",
-	"りょ",
-	"ぎゃ",
-	"ぎゅ",
-	"ぎょ",
-	"じゃ",
-	"じゅ",
-	"じょ",
-	"ぢゃ",
-	"ぢゅ",
-	"ぢょ",
-	"びゃ",
-	"びゅ",
-	"びょ",
-	"ぴゃ",
-	"ぴゅ",
-	"ぴょ"
-]
-
-const FOREIGN_TOKENS = [
-	"てぃ",
-	"でぃ",
-	"とぅ",
-	"どぅ",
-	"ふぁ",
-	"ふぃ",
-	"ふぇ",
-	"ふぉ",
-	"うぃ",
-	"うぇ",
-	"うぉ",
-	"しぇ",
-	"じぇ",
-	"ちぇ",
-	"つぁ",
-	"つぃ",
-	"つぇ",
-	"つぉ",
-	"ゔぁ",
-	"ゔぃ",
-	"ゔぇ",
-	"ゔぉ",
-	"くぁ",
-	"くぃ",
-	"くぇ",
-	"くぉ",
-	"ぐぁ",
-	"ぐぃ",
-	"ぐぇ",
-	"ぐぉ",
-	"いぇ"
-]
-
-const UNSUPPORTED_SMALL_KANA = [..."ぁぃぅぇぉゃゅょ"]
-
 interface TokenPattern {
 	text: string
 	kind: TokenKind
@@ -116,12 +44,13 @@ function makePatterns(): TokenPattern[] {
 		}
 	}
 
-	add(FOREIGN_TOKENS, "foreign-combination")
-	add(YŌON_TOKENS, "yoon")
-	add(BASE_TOKENS, "kana-token")
+	add(FOREIGN_HIRAGANA_TOKENS, "foreign-combination")
+	add(UNSUPPORTED_YOON_HIRAGANA_TOKENS, "unsupported-yoon")
+	add(SELECTOR_YOON_HIRAGANA_TOKENS, "yoon")
+	add(SELECTOR_BASE_HIRAGANA_TOKENS, "kana-token")
 	add(["っ"], "small-tsu")
-	add(["ー"], "prolonged-mark")
-	add(UNSUPPORTED_SMALL_KANA, "unsupported-small-kana")
+	patterns.push({ text: "ー", kind: "prolonged-mark" })
+	add(UNSUPPORTED_SMALL_HIRAGANA, "unsupported-small-kana")
 
 	return patterns.sort((a, b) => b.text.length - a.text.length)
 }
@@ -150,11 +79,14 @@ export function tokenizeSurface(surface: string): TokenizationResult {
 		if (pattern) {
 			tokens.push(pattern.text)
 			details.push({ text: pattern.text, kind: pattern.kind })
-			if (pattern.kind === "unsupported-small-kana") {
+			if (
+				pattern.kind === "unsupported-small-kana" ||
+				pattern.kind === "unsupported-yoon"
+			) {
 				diagnostics.push(
 					diagnostic(
 						"unsupported-selector-mora",
-						"A standalone small kana is not selectable in Phase 1.",
+						"The token is not representable by the Phase 1 selector.",
 						pattern.text
 					)
 				)

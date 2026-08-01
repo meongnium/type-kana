@@ -1,24 +1,14 @@
 import type { ScriptClassification, WordScript } from "./contracts.ts"
+import {
+	SURFACE_HIRAGANA_CHARACTERS,
+	SURFACE_KATAKANA_CHARACTERS
+} from "./inventory.ts"
 
-const HIRAGANA_CHARACTERS = [
-	..."あいうえおかきくけこさしすせそたちつてとなにぬねのはひふへほまみむめもやゆよらりるれろわをん",
-	..."がぎぐげござじずぜぞだぢづでどばびぶべぼぱぴぷぺぽゔ",
-	..."ぁぃぅぇぉゃゅょっ"
-]
+export const SUPPORTED_HIRAGANA_CHARACTERS: ReadonlySet<string> =
+	SURFACE_HIRAGANA_CHARACTERS
 
-const KATAKANA_CHARACTERS = [
-	..."アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン",
-	..."ガギグゲゴザジズゼゾダヂヅデドバビブベボパピプペポヴ",
-	..."ァィゥェォャュョッ"
-]
-
-export const SUPPORTED_HIRAGANA_CHARACTERS: ReadonlySet<string> = new Set(
-	HIRAGANA_CHARACTERS
-)
-
-export const SUPPORTED_KATAKANA_CHARACTERS: ReadonlySet<string> = new Set(
-	KATAKANA_CHARACTERS
-)
+export const SUPPORTED_KATAKANA_CHARACTERS: ReadonlySet<string> =
+	SURFACE_KATAKANA_CHARACTERS
 
 export const PROLONGED_SOUND_MARK = "ー"
 
@@ -162,7 +152,7 @@ export function validateSourceSurface(surface: string): SurfaceValidation {
 
 	return {
 		allowed: diagnostics.length === 0,
-		classification,
+		classification: classification,
 		diagnostics
 	}
 }
