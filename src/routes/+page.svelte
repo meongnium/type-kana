@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { base } from "$app/paths"
 	import Header from "./Header.svelte"
 	import Button from "$/components/Button.svelte"
 	import Icon from "$/components/MaterialIcon.svelte"
@@ -24,21 +25,37 @@
 			Japanese syllabaries.
 		</p>
 
-		<div class="buttons">
-			<Button href="setup/">
-				Start
+		<div class="practice-choices">
+			<Button href={base + "/setup/"}>
+				Characters
+				<Icon size="1.25em" path={mdiArrowRight} />
+			</Button>
+			<Button href={base + "/words/setup/"}>
+				Words
 				<Icon size="1.25em" path={mdiArrowRight} />
 			</Button>
 		</div>
+
+		<p class="about-link">
+			<a href={base + "/about/"}>Sources &amp; attribution</a>
+		</p>
 	</div>
 </section>
 
 <style lang="postcss">
-	.buttons {
+	.practice-choices {
 		display: flex;
 		gap: 1em;
 		justify-content: center;
 		flex-wrap: wrap;
+	}
+
+	.about-link {
+		margin-top: calc(1.5 * var(--line-space));
+	}
+
+	.about-link a {
+		color: var(--accent-color);
 	}
 
 	* :global(.button .svg-icon) {

@@ -174,9 +174,41 @@ export interface KanaReadingWordV1 {
 	sourceRefs: readonly string[]
 }
 
+export interface RuntimeSourceReferenceV1 {
+	source: SourceName
+	repositoryUrl: string
+	releaseOrCommit: string
+	releaseCommit?: string
+	gitBlobSha?: string
+	assetFilename: string
+	immutableUrl: string
+	expectedSha256: string
+	observedSha256: string
+	extractedSha256?: string
+}
+
+export interface RuntimeSourceManifestV1 {
+	schemaVersion: number
+	importerVersion: string
+	generatedAt: string
+	sources: readonly RuntimeSourceReferenceV1[]
+}
+
+export interface RuntimeAttributionV1 {
+	collectionNotice: string
+	sources: readonly {
+		name: string
+		url: string
+		license: string
+	}[]
+}
+
 export interface KanaReadingArtifactV1 {
 	schemaVersion: typeof WORD_ARTIFACT_SCHEMA_VERSION
 	contentVersion: string
 	generatedAt: string
+	artifactHash?: string
+	sourceManifest?: RuntimeSourceManifestV1
+	attribution?: RuntimeAttributionV1
 	words: readonly KanaReadingWordV1[]
 }

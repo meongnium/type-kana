@@ -18,14 +18,29 @@ function toKatakana(value: string): string {
 		.join("")
 }
 
+export const SELECTOR_GOJUON_HIRAGANA_TOKENS: readonly string[] = Object.freeze(
+	flattenKana(hiragana.gojuon)
+)
+
+export const SELECTOR_DAKUON_HIRAGANA_TOKENS: readonly string[] = Object.freeze(
+	flattenKana(hiragana.dakuon)
+)
+
+export const SELECTOR_YOON_GROUP_HIRAGANA_TOKENS: readonly string[] =
+	Object.freeze(flattenKana(hiragana.yoon))
+
+export const SELECTOR_DAKUON_YOON_HIRAGANA_TOKENS: readonly string[] =
+	Object.freeze(flattenKana(hiragana.dakuonYoon))
+
 export const SELECTOR_BASE_HIRAGANA_TOKENS: readonly string[] = Object.freeze([
-	...flattenKana(hiragana.gojuon),
-	...flattenKana(hiragana.dakuon)
+	...SELECTOR_GOJUON_HIRAGANA_TOKENS,
+	...SELECTOR_DAKUON_HIRAGANA_TOKENS
 ])
 
+// Preserve the existing combined yōon selector inventory used by Phase 0.
 export const SELECTOR_YOON_HIRAGANA_TOKENS: readonly string[] = Object.freeze([
-	...flattenKana(hiragana.yoon),
-	...flattenKana(hiragana.dakuonYoon)
+	...SELECTOR_YOON_GROUP_HIRAGANA_TOKENS,
+	...SELECTOR_DAKUON_YOON_HIRAGANA_TOKENS
 ])
 
 export const SELECTOR_HIRAGANA_TOKENS: readonly string[] = Object.freeze([

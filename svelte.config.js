@@ -37,6 +37,10 @@ const prerenderEntries = [
 	"/session",
 	"/setup",
 	"/summary",
+	"/about",
+	"/words/setup",
+	"/words/session",
+	"/words/summary",
 	...listRoutesIn("/icon/")
 ]
 

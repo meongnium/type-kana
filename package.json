@@ -17,7 +17,9 @@
 		"prepare": "svelte-kit sync",
 		"preview": "vite preview",
 		"test:phase0": "node --experimental-strip-types tests/words/run-phase0.mjs",
-		"test:phase05": "node --experimental-strip-types tests/words/run-phase05.mjs"
+		"test:phase05": "node --experimental-strip-types tests/words/run-phase05.mjs",
+		"test:phase1": "node --experimental-strip-types tests/words/run-phase1.mjs",
+		"build:words": "node --experimental-strip-types tools/words/build-runtime-artifact.mjs"
 	},
 	"dependencies": {
 		"@mdi/js": "^7.4.47",
