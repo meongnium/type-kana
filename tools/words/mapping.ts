@@ -47,6 +47,10 @@ function normalized(value: string): string {
 	return value.normalize("NFKC")
 }
 
+function formLookupKey(writtenSurface: string, reading: string): string {
+	return JSON.stringify([normalized(writtenSurface), normalized(reading)])
+}
+
 export function restrictionsAllow(
 	form: CanonicalForm,
 	row: OpenJlptSourceRow
@@ -54,7 +58,7 @@ export function restrictionsAllow(
 	const writtenRestrictions = form.restrictions.appliesToWritten.map(normalized)
 	const readingRestrictions = form.restrictions.appliesToReading.map(normalized)
 	const written = normalized(row.sourceWrittenSurface)
-	const reading = normalized(row.sourceReading)
+	const reading = normalized(row.effectiveReading)
 	return (
 		(writtenRestrictions.length === 0 ||
 			writtenRestrictions.includes(written)) &&
@@ -214,6 +218,8 @@ function makeDecision(
 		sourceRowKey: row.sourceRowKey,
 		sourceRecordHash: row.sourceRecordHash,
 		sourceLocator: row.sourceLocator,
+		rawSourceReading: row.rawSourceReading,
+		effectiveReading: row.effectiveReading,
 		status,
 		approval,
 		candidateFormIds,
@@ -243,6 +249,13 @@ export function mapOpenJlptRows(
 	overrides: readonly ManualOverride[] = []
 ): MappingPipelineResult {
 	const forms = lexemes.flatMap((lexeme) => lexeme.forms)
+	const formsBySurfaceReading = new Map<string, CanonicalForm[]>()
+	for (const form of forms) {
+		const key = formLookupKey(form.writtenSurface, form.reading)
+		const bucket = formsBySurfaceReading.get(key) ?? []
+		bucket.push(form)
+		formsBySurfaceReading.set(key, bucket)
+	}
 	const overrideIndex = indexManualOverrides(overrides, forms, rows)
 	const membershipOwners = new Map<string, string>()
 	const membershipLevels = new Map<string, string>()
@@ -251,16 +264,35 @@ export function mapOpenJlptRows(
 	const approvedMappings: ApprovedWordMapping[] = []
 
 	for (const row of rows) {
-		const candidates = forms.filter(
-			(form) =>
-				normalized(form.writtenSurface) ===
-					normalized(row.sourceWrittenSurface) &&
-				normalized(form.reading) === normalized(row.sourceReading)
-		)
+		const candidates =
+			formsBySurfaceReading.get(
+				formLookupKey(row.sourceWrittenSurface, row.effectiveReading)
+			) ?? []
 		const candidateFormIds = [...new Set(candidates.map((form) => form.formId))]
 		const sourceSurfaceValidation = validateSourceSurface(
 			row.sourceWrittenSurface
 		)
+
+		if (row.sourceReadingStatus === "invalid-source-reading") {
+			const current = makeDecision(
+				row,
+				"invalid-source-reading",
+				"rejected",
+				candidateFormIds,
+				["invalid-source-reading"]
+			)
+			decisions.push(current)
+			diagnostics.push(
+				diagnosticForRow(
+					row,
+					"invalid-source-reading",
+					row.sourceReadingError ??
+						"The OpenJLPT source reading cannot be used for canonical matching.",
+					candidateFormIds
+				)
+			)
+			continue
+		}
 
 		if (!sourceSurfaceValidation.allowed) {
 			const hasKanji =

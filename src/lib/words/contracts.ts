@@ -20,10 +20,14 @@ export type ScriptClassification =
 
 export interface SourcePin {
 	source: SourceName
+	repositoryUrl: string
 	releaseOrCommit: string
+	releaseCommit?: string
+	gitBlobSha?: string
 	assetFilename: string
+	immutableUrl: string
 	sha256: string
-	importerVersion?: string
+	importerVersion: string
 	generatedAt?: string
 }
 
@@ -56,15 +60,25 @@ export interface CanonicalLexeme {
 	sourcePin: SourcePin
 }
 
+export type SourceReadingStatus =
+	| "explicit"
+	| "derived-from-surface"
+	| "invalid-source-reading"
+
 export interface OpenJlptSourceRow {
 	sourceRowKey: string
 	sourceRecordHash: string
 	collectionId: string
 	sourceLevel: string
 	sourceWrittenSurface: string
-	sourceReading: string
+	rawSourceReading: string
+	effectiveReading: string
+	sourceReadingStatus: SourceReadingStatus
+	sourceReadingError?: string
+	sourceMeanings: readonly string[]
 	sourcePin: SourcePin
-	sourceLocator?: string
+	sourceIndex: number
+	sourceLocator: string
 }
 
 export interface WordImporterSnapshotV1 {
@@ -85,6 +99,7 @@ export type MappingStatus =
 	| "unmatched"
 	| "unsupported-selector-mora"
 	| "invalid-surface"
+	| "invalid-source-reading"
 	| "invalid-restriction"
 	| "invalid-manual-override"
 	| "conflicting-membership"
@@ -96,6 +111,8 @@ export interface MappingDecision {
 	sourceRowKey: string
 	sourceRecordHash: string
 	sourceLocator?: string
+	rawSourceReading: string
+	effectiveReading: string
 	status: MappingStatus
 	approval: MappingApproval
 	candidateFormIds: readonly string[]

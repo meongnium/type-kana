@@ -21,6 +21,9 @@ import { mapOpenJlptRows } from "../../tools/words/mapping.ts"
 
 const pin = {
 	source: "openjlpt",
+	repositoryUrl: "https://github.com/evanclan/OpenJLPT",
+	immutableUrl: "https://example.invalid/openjlpt-synthetic",
+	importerVersion: "phase0.5-test",
 	releaseOrCommit: "synthetic-fixture-v1",
 	assetFilename: "n5.json",
 	sha256: "synthetic-fixture-sha256"
@@ -38,16 +41,22 @@ function form(entSeq, surface, reading = surface) {
 	}
 }
 
-function row(surface, reading = surface) {
+function row(surface, reading = surface, overrides = {}) {
 	const base = {
 		collectionId: WORD_COLLECTION_N5,
 		sourceLevel: "N5",
 		sourceWrittenSurface: surface,
-		sourceReading: reading
+		rawSourceReading: reading,
+		effectiveReading: reading,
+		sourceReadingStatus: "explicit",
+		sourceMeanings: [],
+		...overrides
 	}
 	return {
 		sourceRowKey: createSourceRowKey(pin, base),
 		sourceRecordHash: createSourceRecordHash(base),
+		sourceIndex: overrides.sourceIndex ?? 0,
+		sourceLocator: overrides.sourceLocator ?? "synthetic#0",
 		...base,
 		sourcePin: pin
 	}
@@ -65,6 +74,9 @@ function approved(surface = "あまり", reading = surface) {
 				senses: [],
 				sourcePin: {
 					source: "jmdict-simplified",
+					repositoryUrl: "https://github.com/scriptin/jmdict-simplified",
+					immutableUrl: "https://example.invalid/jmdict-synthetic",
+					importerVersion: "phase0.5-test",
 					releaseOrCommit: "synthetic-fixture-v1",
 					assetFilename: "jmdict-eng.json",
 					sha256: "synthetic-jmdict-sha256"

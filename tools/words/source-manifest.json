@@ -1,0 +1,35 @@
+{
+	"schemaVersion": 1,
+	"importerVersion": "phase0.5.0",
+	"sources": [
+		{
+			"kind": "jmdict-tar-gz",
+			"cacheFilename": "jmdict-eng-3.6.2+20260727141257.json.tgz",
+			"extractedFilename": "jmdict-eng-3.6.2.json",
+			"pin": {
+				"source": "jmdict-simplified",
+				"repositoryUrl": "https://github.com/scriptin/jmdict-simplified",
+				"releaseOrCommit": "3.6.2+20260727141257",
+				"releaseCommit": "b67b0fe",
+				"assetFilename": "jmdict-eng-3.6.2+20260727141257.json.tgz",
+				"immutableUrl": "https://github.com/scriptin/jmdict-simplified/releases/download/3.6.2%2B20260727141257/jmdict-eng-3.6.2%2B20260727141257.json.tgz",
+				"sha256": "98a6d75c76fbdf129f2fa65075df94a827ff63bbf54c8d6c8e1e7ecdf8ae7e0f",
+				"importerVersion": "phase0.5.0"
+			}
+		},
+		{
+			"kind": "openjlpt-json",
+			"cacheFilename": "openjlpt-n5-c42fd9fa3777bfc1775446f7c418d549dfd6e4cf.json",
+			"pin": {
+				"source": "openjlpt",
+				"repositoryUrl": "https://github.com/evanclan/OpenJLPT",
+				"releaseOrCommit": "c42fd9fa3777bfc1775446f7c418d549dfd6e4cf",
+				"assetFilename": "data/json/vocab/n5.json",
+				"immutableUrl": "https://raw.githubusercontent.com/evanclan/OpenJLPT/c42fd9fa3777bfc1775446f7c418d549dfd6e4cf/data/json/vocab/n5.json",
+				"sha256": "3e606fc15fd5d177fa7c3928c17f28b0d34ac84ec6bdbfe0947b339d9d815a6d",
+				"gitBlobSha": "61177335cf35c33b7ead4d0f0c344b73bd90ceb6",
+				"importerVersion": "phase0.5.0"
+			}
+		}
+	]
+}

@@ -12,6 +12,10 @@ export function encodeIdentityParts(values: readonly string[]): string {
 	return JSON.stringify(values.map(normalizeIdentityText))
 }
 
+export function encodeExactIdentityParts(values: readonly unknown[]): string {
+	return JSON.stringify(values)
+}
+
 export function sha256Hex(value: string): string {
 	return createHash("sha256").update(value, "utf8").digest("hex")
 }
@@ -45,29 +49,32 @@ export function createReadingCardId(formId: string): string {
 	return "reading-typing:v1:sha256:" + sha256Hex(formId)
 }
 
-export function createSourceRecordHash(
-	row: Pick<
-		OpenJlptSourceRow,
-		"collectionId" | "sourceLevel" | "sourceWrittenSurface" | "sourceReading"
-	>
-): string {
-	const identity = encodeIdentityParts([
-		row.collectionId,
-		row.sourceLevel,
-		row.sourceWrittenSurface,
-		row.sourceReading
-	])
-	return sha256Hex(identity)
+type SourceRecordIdentity = Pick<
+	OpenJlptSourceRow,
+	| "collectionId"
+	| "sourceLevel"
+	| "sourceWrittenSurface"
+	| "rawSourceReading"
+	| "sourceMeanings"
+>
+
+export function createSourceRecordHash(row: SourceRecordIdentity): string {
+	return sha256Hex(
+		encodeExactIdentityParts([
+			row.collectionId,
+			row.sourceLevel,
+			row.sourceWrittenSurface,
+			row.rawSourceReading,
+			[...row.sourceMeanings]
+		])
+	)
 }
 
 export function createSourceRowKey(
 	pin: SourcePin,
-	row: Pick<
-		OpenJlptSourceRow,
-		"collectionId" | "sourceLevel" | "sourceWrittenSurface" | "sourceReading"
-	> & { sourceLocator?: string }
+	row: SourceRecordIdentity & { sourceLocator?: string }
 ): string {
-	const identity = encodeIdentityParts([
+	const identity = encodeExactIdentityParts([
 		pin.source,
 		pin.releaseOrCommit,
 		pin.assetFilename,

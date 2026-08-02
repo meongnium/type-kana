@@ -167,7 +167,9 @@ function assertMappingReleaseIntegrity(mapping: ApprovedWordMapping): void {
 	)
 	assert(
 		decision.sourceRowKey === row.sourceRowKey &&
-			decision.sourceRecordHash === row.sourceRecordHash,
+			decision.sourceRecordHash === row.sourceRecordHash &&
+			decision.rawSourceReading === row.rawSourceReading &&
+			decision.effectiveReading === row.effectiveReading,
 		"Mapping decision source provenance does not match its row: " +
 			row.sourceRowKey
 	)
@@ -190,7 +192,7 @@ function assertMappingReleaseIntegrity(mapping: ApprovedWordMapping): void {
 	)
 	assert(
 		normalize(form.writtenSurface) === normalize(row.sourceWrittenSurface) &&
-			normalize(form.reading) === normalize(row.sourceReading),
+			normalize(form.reading) === normalize(row.effectiveReading),
 		"Mapping does not preserve the source spelling-reading pair: " +
 			row.sourceRowKey
 	)

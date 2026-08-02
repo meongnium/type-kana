@@ -85,6 +85,27 @@ numerals, Kanji, and every other character are rejected. Foreign combinations
 such as ティ, ファ, チェ, and ウィ are recognized for diagnostics but are not
 eligible for the current selector.
 
+## Phase 0.5 real-source audit
+
+Phase 0.5 adds build-time adapters and a reproducible dry-run audit, but still
+does not generate or commit a browser artifact. The pinned sources and
+checksums are recorded in tools/words/source-manifest.json. The acquisition
+runner verifies the JMdict archive before extracting its single JSON member and
+verifies the OpenJLPT file SHA-256 and Git blob identity. Files remain in the
+ignored .cache/words-sources directory.
+
+OpenJLPT raw reading and effective reading are separate importer fields. The
+raw value is retained exactly for provenance and hashing. A non-empty raw
+reading is normalized with NFKC for matching; an empty reading derives from
+the exact source word only when that source word passes the kana-only surface
+policy. Empty readings on Kanji, punctuation, Latin, numeral, or other
+invalid surfaces become invalid-source-reading and never synthesize a display
+surface.
+
+The real N5 report is written only to audit/words/n5-import-report.json. It
+keeps diagnostics and bounded review samples out of the runtime contract. The
+first reviewed run proposes a coverage baseline but does not activate it.
+
 ## Tokenization and eligibility
 
 Tokenization and selector eligibility are separate steps.
@@ -133,9 +154,10 @@ The deterministic identity contract is:
 - reading card ID = reading-typing:v1 plus SHA-256 of form ID.
 
 JSON tuple encoding is used instead of a delimiter, so embedded separators
-cannot create equivalent identities. Source row hashes include the source
-fields; source row keys also include source name, immutable release/commit,
-asset filename, checksum, and optional source locator.
+cannot create equivalent identities. Source row hashes include the exact raw
+source surface, raw reading, level, collection, and audit meanings; they never
+use effective reading. Source row keys also include source name, immutable
+release/commit, asset filename, checksum, and source locator.
 
 Duplicate OpenJLPT rows remain decisions and diagnostics, but collapse to one
 collection membership after mapping to the same canonical form. Different
@@ -163,6 +185,7 @@ The mapping statuses are:
 - invalid-manual-override: an override is malformed, duplicated, unknown, or
   selects an invalid form;
 - invalid-surface: the source surface is forbidden;
+- invalid-source-reading: an empty or malformed OpenJLPT reading cannot be derived safely;
 - unsupported-selector-mora: the surface or pronunciation cannot be represented;
 - conflicting-membership: one membership has conflicting source levels.
 
@@ -220,13 +243,14 @@ engine declaration is restricted to:
 ## Synthetic-only scope and deferred work
 
 Phase 0 tests use only hand-written fixtures shaped like JMdict and OpenJLPT
-records. They are not real JLPT assignments. No real dataset is downloaded or
-imported.
+records. They are not real JLPT assignments. Phase 0.5 separately runs the
+pinned real N5 audit, but keeps the downloaded sources in the ignored cache
+and does not create a production artifact.
 
 Still deferred:
 
 - Phase 1 Words route, selectors, session UI, and static runtime dataset;
-- real JMdict/OpenJLPT source pins, importer execution, and artifact generation;
+- production artifact generation, manual mapping review, and coverage-baseline activation;
 - Dexie, IndexedDB progress, FSRS, due queues, and long-term SRS;
 - meaning cards, Kanji vocabulary practice, Kanji character practice, audio,
   contextual questions, JFT collections, and backend sync.

@@ -40,6 +40,9 @@ import {
 
 const openJlptPin = {
 	source: "openjlpt",
+	repositoryUrl: "https://github.com/evanclan/OpenJLPT",
+	immutableUrl: "https://example.invalid/openjlpt-synthetic",
+	importerVersion: "phase0.5-test",
 	releaseOrCommit: "synthetic-fixture-v1",
 	assetFilename: "n5.json",
 	sha256: "synthetic-fixture-sha256"
@@ -47,6 +50,9 @@ const openJlptPin = {
 
 const jmdictPin = {
 	source: "jmdict-simplified",
+	repositoryUrl: "https://github.com/scriptin/jmdict-simplified",
+	immutableUrl: "https://example.invalid/jmdict-synthetic",
+	importerVersion: "phase0.5-test",
 	releaseOrCommit: "synthetic-fixture-v1",
 	assetFilename: "jmdict-eng.json",
 	sha256: "synthetic-jmdict-sha256"
@@ -91,11 +97,16 @@ function sourceRow(
 		collectionId: WORD_COLLECTION_N5,
 		sourceLevel: "N5",
 		sourceWrittenSurface,
-		sourceReading,
+		rawSourceReading: sourceReading,
+		effectiveReading: overrides.effectiveReading ?? sourceReading,
+		sourceReadingStatus: overrides.sourceReadingStatus ?? "explicit",
+		sourceMeanings: overrides.sourceMeanings ?? [],
 		...overrides
 	}
 	return {
 		sourceRowKey: createSourceRowKey(openJlptPin, base),
+		sourceIndex: overrides.sourceIndex ?? 0,
+		sourceLocator: overrides.sourceLocator ?? "synthetic#0",
 		sourceRecordHash: createSourceRecordHash(base),
 		...base,
 		sourcePin: openJlptPin
